@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import draw from './draw';
 import './game.css';
-import * as Logic from './logic';
+import Logic from './logic';
 
 // 1850 - width, 1010 - height
 
@@ -31,6 +31,7 @@ class Game extends React.Component<{}, {}> {
     public layout: Layout
     public shiftSpeed: number
     public steps: number[][]
+    public coeficient: number
 
     constructor(props: any) {
         super(props);
@@ -41,6 +42,8 @@ class Game extends React.Component<{}, {}> {
             columns: 7,
             raws: 12
         }
+
+        this.coeficient = 1;
 
         this.sizeImage = [80, 80];
 
@@ -62,7 +65,7 @@ class Game extends React.Component<{}, {}> {
     // addField - adding new map to existing and updating shift -> setting to 0(zero)
     public addField() {
 
-        this.field = Logic.createLevel(this.layout.columns, this.layout.raws); // adding new map
+        this.field = Logic.createLevel(this.layout.columns, this.layout.raws, this.coeficient); // adding new map
 
         this.shift = 0;
     }
@@ -107,8 +110,8 @@ class Game extends React.Component<{}, {}> {
         this.move()
 
         // adding new level
-        if (this.shift >= this.layout.raws * 2 * this.sizeImage[0]) {
-            this.field = Logic.addingMap(this.field, this.layout.raws * 2, this.layout.columns);
+        if (this.shift >= this.layout.raws * this.coeficient * this.sizeImage[0]) {
+            this.field = Logic.addingMap(this.field, this.layout.raws * this.coeficient, this.layout.columns);
             this.shift = 0;
         }
 
@@ -135,7 +138,7 @@ class Game extends React.Component<{}, {}> {
         this.ctx.scale(this.windowSize.coeficient, this.windowSize.coeficient);
         this.ctx.fillStyle = "#ffcc66";
 
-        this.field = Logic.createLevel(this.layout.columns, this.layout.raws);
+        this.field = Logic.createLevel(this.layout.columns, this.layout.raws, this.coeficient);
         /* for(let i = 0; i < 5; i++) {
             this.field[i] = (new Array(this.columns)).fill("sky")
         }*/
