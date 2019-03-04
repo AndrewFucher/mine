@@ -32,6 +32,7 @@ class Game extends React.Component<{}, {}> {
     public shiftSpeed: number
     public steps: number[][]
     public coeficient: number
+    private depth: number
 
     constructor(props: any) {
         super(props);
@@ -42,6 +43,12 @@ class Game extends React.Component<{}, {}> {
             columns: 7,
             raws: 12
         }
+
+        // how deep player is
+        this.depth = 0;
+
+        // tslint:disable-next-line:no-console
+        console.log(this.depth);
 
         this.coeficient = 1;
 
@@ -59,10 +66,12 @@ class Game extends React.Component<{}, {}> {
         this.shift = 0;
         this.shiftSpeed = 0;
 
+        // steps is value with coords how to move for player to finish(place wear someone press)
         this.steps = [];
+
     }
 
-    // addField - adding new map to existing and updating shift -> setting to 0(zero)
+    // addField - adding new map(deleting old) to existing and updating shift -> setting to 0(zero)
     public addField() {
 
         this.field = Logic.createLevel(this.layout.columns, this.layout.raws, this.coeficient); // adding new map
@@ -70,25 +79,27 @@ class Game extends React.Component<{}, {}> {
         this.shift = 0;
     }
 
+    // when player click or touch screen game's player moves to this position
     public handleClick(x: any) {
 
         if (this.shiftSpeed === 0 && this.shift >= 0) {
             this.shiftSpeed = 1.5;
         }
 
-
+        // I do not know how to actually call this constant. So, I choose "time" beacuse I like it. Here we are getting all data to move player
         const time = Logic.clickHandle(
             x,
             this.field,
             (this.windowSize.width - this.sizeImage[0] * this.windowSize.coeficient * this.layout.columns) / 2,
             this.shift,
             this.layout,
-            this.sizeImage = [80, 80],
+            this.sizeImage,
             this.windowSize.coeficient
         );
 
         this.field = time[0];
         this.steps = time[1];
+
     }
 
     /**
@@ -100,7 +111,9 @@ class Game extends React.Component<{}, {}> {
             // console.log(this.steps);
             // // tslint:disable-next-line:no-console
             // console.log(this.field)
-            this.field = Logic.move(this.field, this.steps[0]);
+            const time = Logic.move(this.field, this.steps[0]);
+            this.field = time.map;
+            this.depth += time.addingDepth;
             this.steps.shift();
         }
     }
@@ -119,7 +132,12 @@ class Game extends React.Component<{}, {}> {
         this.ctx.clearRect(0, 0, this.windowSize.width / this.windowSize.coeficient, this.windowSize.height / this.windowSize.coeficient);
 
         // drawing map on canvas
-        draw(this.field, this.shift, this.ctx);
+        draw(this.field,
+             this.shift,
+             this.depth,
+             [this.canv.width / this.windowSize.coeficient, this.canv.height / this.windowSize.coeficient],
+             this.ctx
+        );
 
         // increasing shift -> moving map down -- if at least there was one click on CANVAS, not in window
 
@@ -135,8 +153,12 @@ class Game extends React.Component<{}, {}> {
             this.ctx = this.canv.getContext("2d");
         }
 
-        this.ctx.scale(this.windowSize.coeficient, this.windowSize.coeficient);
-        this.ctx.fillStyle = "#ffcc66";
+        // setting default values
+        this.ctx.font = "30px Comic Sans MS";
+        this.ctx.textAlign = "end";
+        this.ctx.textAlign = "right";
+        this.ctx.scale(this.windowSize.coeficient, this.windowSize.coeficient); // scale
+        this.ctx.fillStyle = "#ffcc66";                                         // background color
 
         this.field = Logic.createLevel(this.layout.columns, this.layout.raws, this.coeficient);
         /* for(let i = 0; i < 5; i++) {
@@ -148,8 +170,9 @@ class Game extends React.Component<{}, {}> {
 
     public render() {
         return (
-            <canvas width={window.innerWidth.toString()} height={window.innerHeight.toString()} style={{
-                marginLeft: `${(window.innerWidth - this.sizeImage[0] * this.layout.columns * this.windowSize.coeficient) / 2}px`
+            <canvas width={(this.layout.columns * this.sizeImage[1] * this.windowSize.coeficient).toString()} height={window.innerHeight.toString()} style={{
+                marginLeft: `${(window.innerWidth - this.sizeImage[0] * this.layout.columns * this.windowSize.coeficient) / 2}px`,
+                marginRight: `${(window.innerWidth - this.sizeImage[0] * this.layout.columns * this.windowSize.coeficient) / 2}px`,
             }}
             // tslint:disable-next-line:jsx-no-lambda
             onClick={(x) => this.handleClick(x)}

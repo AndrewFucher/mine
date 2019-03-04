@@ -23,9 +23,8 @@ const tuple: any = {
 
 const sizeImage = [80, 80];
 
-function draw(map: any[][], shift: number, canvas: CanvasRenderingContext2D) {
+function drawPlayground(map: any[][], shift: number, canvas: CanvasRenderingContext2D) {
 
-    canvas.fillRect(0, 0, sizeImage[1]*(map[0].length), sizeImage[0]*(map.length - 1));
     // tslint:disable-next-line:no-console
     // console.log(map)
     for(let i = 0; i < map.length; i++) {
@@ -35,6 +34,24 @@ function draw(map: any[][], shift: number, canvas: CanvasRenderingContext2D) {
             }
         }
     }
+
+}
+
+function drawDepth(depth: number, windowSize: number[], canvas: CanvasRenderingContext2D) {
+
+    canvas.fillStyle = "#ffffff"
+    canvas.fillText(`Depth: ${depth}`, windowSize[0] - 5, windowSize[1] - 12);
+    canvas.fillStyle = "#ffcc66";
+    
+}
+
+function draw(map: any[][], shift: number, depth: number, windowSize: number[], canvas: CanvasRenderingContext2D) {
+
+    canvas.fillRect(0, 0, sizeImage[1]*(map[0].length), sizeImage[0]*(map.length - 1));
+
+    drawPlayground(map, shift, canvas);
+    drawDepth(depth, windowSize, canvas);
+    
 }
 
 export default draw;

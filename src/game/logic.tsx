@@ -14,12 +14,16 @@ const tuple: any = {
 class Logic {
 
     public static move(map: any[][], position: number[]) {
+
+        let addingDepth: number = 0;
+
         // tslint:disable-next-line:prefer-for-of
         for(let i = 0; i < map.length; i++) {
             for(let j = 0; j < map[i].length; j++) {
     
                 if (map[i][j] === "player") {
                     map[i][j] = "none";
+                    addingDepth = position[0] - i;
                     break;
                 }
             }
@@ -27,7 +31,7 @@ class Logic {
     
         map[position[0]][position[1]] = "player";
     
-        return map;
+        return {map, addingDepth};
     }
     
     public static clickHandle(eventClick: any, map: any[][], shiftX: number, shiftY: number, layout: Layout, size: number[], coeficient: number) {
@@ -45,6 +49,54 @@ class Logic {
             steps = searchWay(map, [cellY, cellX]);
         }
         return [map, steps];
+    }
+    
+    public static addingMap(map: any[][], raws: number, columns: number) {
+    
+        let newArea: any[][] = new Array(raws);
+    
+        for(let i = 0; i < newArea.length; i++) {
+            newArea[i] = (new Array(columns)).fill(1);
+        }
+        
+        map.splice(0, raws);
+
+        newArea = this.lightning(newArea);
+
+        map = map.concat(newArea);
+        
+        return map;
+    }
+    
+    public static createLevel(columns: number, raws: number, coeficient: number) {
+
+        coeficient++;
+        let newArea: any[][];
+        let gameMap: any[][] = [];
+        const sky: any[][] = new Array(5);
+
+        for(let j = 0; j < coeficient; j++) {
+            newArea = new Array(raws);
+            for(let i = 0; i < newArea.length; i++) {
+                newArea[i] = (new Array(columns)).fill(1);
+            }
+
+            newArea = this.lightning(newArea);
+            gameMap = gameMap.concat(newArea);
+
+        }
+    
+        // the sky above us
+        for(let i = 0; i < 5; i++) {
+            sky[i] = (new Array(columns)).fill("sky")
+        }
+    
+        gameMap[0] = (new Array(columns)).fill("sky"); 
+        gameMap[0][0] = "player" // setting player
+    
+        gameMap = sky.concat(gameMap);
+        
+        return gameMap;
     }
 
     public static refilling(map: any[][]) {
@@ -88,9 +140,6 @@ class Logic {
         } else if (startCoords[0] === map.length) {
             startCoords[0]--;
         }
-
-        // tslint:disable-next-line:no-console
-        console.log(startCoords, map);
 
         map[startCoords[0]][startCoords[1]] = 0;
 
@@ -141,56 +190,6 @@ class Logic {
         }
 
         return this.refilling(map);
-    }
-    
-    public static addingMap(map: any[][], raws: number, columns: number) {
-    
-        let newArea: any[][] = new Array(raws);
-    
-        for(let i = 0; i < newArea.length; i++) {
-            newArea[i] = (new Array(columns)).fill(1);
-        }
-        
-        map.splice(0, raws);
-
-        newArea = this.lightning(newArea);
-
-        map = map.concat(newArea);
-        
-        return map;
-    }
-    
-    public static createLevel(columns: number, raws: number, coeficient: number) {
-
-        coeficient++;
-        let newArea: any[][];
-        let gameMap: any[][] = [];
-        const sky: any[][] = new Array(5);
-
-        for(let j = 0; j < coeficient; j++) {
-            newArea = new Array(raws);
-            for(let i = 0; i < newArea.length; i++) {
-                newArea[i] = (new Array(columns)).fill(1);
-            }
-
-            newArea = this.lightning(newArea);
-            gameMap = gameMap.concat(newArea);
-
-        }
-    
-        // the sky above us
-        for(let i = 0; i < 5; i++) {
-            sky[i] = (new Array(columns)).fill("sky")
-        }
-    
-        gameMap[0] = (new Array(columns)).fill("sky"); 
-        gameMap[0][0] = "player" // setting player
-    
-        gameMap = sky.concat(gameMap);
-    
-        // tslint:disable-next-line:no-console
-        console.log(sky, gameMap);
-        return gameMap;
     }
 }
 
