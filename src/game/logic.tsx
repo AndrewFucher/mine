@@ -7,11 +7,31 @@ interface Layout {
 }
 
 const tuple: any = {
+    2: "player",
     1: "dirt",
     0: "none"
 }
 
 class Logic {
+
+    /**
+     * static checkLoose
+     */
+    public static checkLoose(map: any[][]) {
+        
+        let isIn: boolean = false;
+
+        map.forEach(element => {
+            element.forEach(x => {
+                if (x === tuple[2]) {
+                    isIn = true;
+                }
+            });
+        });
+
+        return isIn;
+
+    }
 
     public static move(map: any[][], position: number[]) {
 

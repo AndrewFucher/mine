@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import draw from './draw';
 import './game.css';
 import Logic from './logic';
@@ -19,11 +18,21 @@ interface Layout {
     raws: number;
 }
 
-class Game extends React.Component<{}, {}> {
+// tslint:disable-next-line:interface-name
+interface Props {
+    onLose?: (depth?: number) => void;
+}
+
+// tslint:disable-next-line:interface-name
+interface State {
+    isGame: boolean
+}
+
+class Game extends React.Component<Props, State> {
 
     public canv: any       // variable to acces canvas
     public ctx: CanvasRenderingContext2D // canvas where i draw
-    public myRef: any // ref
+    public myRef: React.RefObject<HTMLCanvasElement> // ref
     public windowSize: Size
     public sizeImage: number[]
     public shift: number
@@ -33,11 +42,17 @@ class Game extends React.Component<{}, {}> {
     public steps: number[][]
     public coeficient: number
     private depth: number
+    private renderID: number
 
     constructor(props: any) {
         super(props);
+
+        this.state = {
+            isGame: true
+        }
+
         this.myRef = React.createRef<HTMLCanvasElement>(); // ref to acces to canvas
-        this.state = {};
+
         // visible part of game - how many blocks player can see at one moment
         this.layout = {
             columns: 7,
@@ -46,9 +61,6 @@ class Game extends React.Component<{}, {}> {
 
         // how deep player is
         this.depth = 0;
-
-        // tslint:disable-next-line:no-console
-        console.log(this.depth);
 
         this.coeficient = 1;
 
@@ -68,6 +80,19 @@ class Game extends React.Component<{}, {}> {
 
         // steps is value with coords how to move for player to finish(place wear someone press)
         this.steps = [];
+
+    }
+
+    public gameEnd() {
+
+        this.setState({
+            isGame: false
+        })
+
+        window.cancelAnimationFrame(this.renderID);
+        if (this.props.onLose) {
+            this.props.onLose(this.depth);
+        }
 
     }
 
@@ -120,7 +145,11 @@ class Game extends React.Component<{}, {}> {
 
     public update() {
 
-        this.move()
+        this.move();
+
+        if (!Logic.checkLoose(this.field)) {
+            this.gameEnd();
+        }
 
         // adding new level
         if (this.shift >= this.layout.raws * this.coeficient * this.sizeImage[0]) {
@@ -143,7 +172,9 @@ class Game extends React.Component<{}, {}> {
 
         this.shift += this.shiftSpeed;
 
-        window.requestAnimationFrame(() => this.update());
+        if (this.state.isGame) {
+            this.renderID = window.requestAnimationFrame(() => this.update());
+        }
     }
 
     public componentDidMount() {
@@ -165,7 +196,7 @@ class Game extends React.Component<{}, {}> {
             this.field[i] = (new Array(this.columns)).fill("sky")
         }*/
 
-        window.requestAnimationFrame(() => this.update());
+        this.renderID = window.requestAnimationFrame(() => this.update());
     }
 
     public render() {
@@ -182,11 +213,4 @@ class Game extends React.Component<{}, {}> {
 
 }
 
-function start_game() {
-    ReactDOM.render(
-        <Game />,
-        document.getElementById('root') as HTMLElement
-    );
-}
-
-export default start_game;
+export default Game;

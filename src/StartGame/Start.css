@@ -1,0 +1,32 @@
+.window {
+    width: 185px;
+    left: calc(50% - 92.5px);
+    top: 40%;
+    height: 71px;
+    position: absolute;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.start_button {
+    height: 51px;
+}
+  
+.start {
+    width: 100%;
+    height: 100%;
+    background-color: darkgreen;
+    color: chartreuse;
+    border: none;
+    font-size: xx-large;
+    outline: none;
+    cursor: pointer;
+    border-radius: 10px;
+    box-shadow: -1px 4px 63px 2px grey;
+}
+  
+.depth {
+    text-align: center;
+    font-family: 'Comic Sans MS';
+    font-size: 23px;
+}

@@ -1,23 +1,51 @@
 import * as React from 'react';
-import './App.css';
-import game_start from './game/game';
+// import './App.css';
+import Game from './game/game';
+import Start from './StartGame/Start';
 
-class App extends React.Component {
+// tslint:disable-next-line:interface-name
+interface State {
+  isGame: boolean;
+  depth?: number;
+}
 
-  public startGame() {
-    game_start();
+class App extends React.Component<{}, State> {
+
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      isGame: false
+    }
+
+  }
+
+  /**
+   * onChange - game over or start game
+   */
+  public onChange = (depth?: number) => {
+
+    this.setState({
+      // tslint:disable-next-line:object-literal-shorthand
+      depth: depth,
+      isGame: !this.state.isGame
+    })
+    
   }
 
   public render() {
-    return (
-      <div id="window" className="window">
-        <div className="start_button">
-          <button className="start"
-          // tslint:disable-next-line:jsx-no-lambda
-          onClick={() => this.startGame()}>START</button>
-        </div>
-      </div>
-    );
+
+    if (this.state.isGame) {
+      return (
+        <Game onLose={this.onChange} />
+      );
+    } if (!this.state.isGame) {
+      return (
+        <Start onClick={this.onChange} depth={this.state.depth} />
+      );
+    } else {
+      return;
+    }
   }
 }
 
