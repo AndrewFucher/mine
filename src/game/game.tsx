@@ -99,7 +99,7 @@ class Game extends React.Component<Props, State> {
     // addField - adding new map(deleting old) to existing and updating shift -> setting to 0(zero)
     public addField() {
 
-        this.field = Logic.createLevel(this.layout.columns, this.layout.raws, this.coeficient); // adding new map
+        this.field = Logic.createLevel(this.coeficient, this.field, this.layout.columns, this.layout.raws); // adding new map
 
         this.shift = 0;
     }
@@ -152,8 +152,8 @@ class Game extends React.Component<Props, State> {
         }
 
         // adding new level
-        if (this.shift >= this.layout.raws * this.coeficient * this.sizeImage[0]) {
-            this.field = Logic.addingMap(this.field, this.layout.raws * this.coeficient, this.layout.columns);
+        if (this.shift >= this.layout.raws * this.coeficient * this.sizeImage[0] && this.steps.length === 0) {
+            this.field = Logic.createLevel(this.coeficient, this.field, this.layout.raws * this.coeficient, this.layout.columns);
             this.shift = 0;
         }
 
@@ -191,7 +191,7 @@ class Game extends React.Component<Props, State> {
         this.ctx.scale(this.windowSize.coeficient, this.windowSize.coeficient); // scale
         this.ctx.fillStyle = "#ffcc66";                                         // background color
 
-        this.field = Logic.createLevel(this.layout.columns, this.layout.raws, this.coeficient);
+        this.field = Logic.createLevel(this.coeficient, this.field, this.layout.columns, this.layout.raws);
         /* for(let i = 0; i < 5; i++) {
             this.field[i] = (new Array(this.columns)).fill("sky")
         }*/

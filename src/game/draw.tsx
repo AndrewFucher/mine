@@ -1,13 +1,10 @@
+import bedrock from './images/bedrock.png';
 import dirt from './images/dirt.png';
 import player from './images/player.png';
 import sky from './images/sky.png';
 
 const dirtImage: HTMLImageElement = new Image();
 dirtImage.src = dirt;
-// tslint:disable-next-line:only-arrow-functions
-dirtImage.onclick = function(event: any) {
-    dirtImage.src = player;
-}
 
 const playerImage: HTMLImageElement = new Image();
 playerImage.src = player;
@@ -15,7 +12,11 @@ playerImage.src = player;
 const skyImage: HTMLImageElement = new Image();
 skyImage.src = sky;
 
+const bedrockImage: HTMLImageElement = new Image();
+bedrockImage.src = bedrock;
+
 const tuple: any = {
+    "bedrock": bedrockImage,
     "dirt": dirtImage,
     "player": playerImage,
     "sky": skyImage

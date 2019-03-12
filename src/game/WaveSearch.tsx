@@ -12,11 +12,11 @@ function transformArray(map: any[][], finish: number[]) {
             if (map[i][j] === "player") {
                 raw.push(-2);
                 continue;
-            } else if (map[i][j] === "dirt") {
-                raw.push(-1);
+            } else if (map[i][j] === "none" || map[i][j] === "sky") {
+                raw.push(0);
                 continue;
             } else {
-                raw.push(0);
+                raw.push(-1);
             }
 
 
